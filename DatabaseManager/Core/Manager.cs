@@ -112,7 +112,7 @@ namespace DatabaseManager.Core
             if (table.IsNull())
                 return null;
 
-            return new Table
+            return new Table()
             {
                 Name = table.TABLE_NAME,
                 Columns = GetDbColumns(table.TABLE_NAME).ToList()

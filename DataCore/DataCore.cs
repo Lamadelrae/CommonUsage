@@ -99,9 +99,9 @@ namespace DataCore
                     {
                         try
                         {
-                            var propertyInfo = obj.GetType().GetProperty(prop.Name);
+                            PropertyInfo propertyInfo = obj.GetType().GetProperty(prop.Name);
 
-                            var typedValue = Convert.ChangeType(row[prop.Name], propertyInfo.PropertyType);
+                            object typedValue = Convert.ChangeType(row[prop.Name], propertyInfo.PropertyType);
 
                             propertyInfo.SetValue(obj, typedValue);
                         }

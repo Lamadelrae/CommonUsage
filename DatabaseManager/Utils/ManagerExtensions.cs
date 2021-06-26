@@ -88,17 +88,18 @@ namespace DatabaseManager.Extensions
 
         public static string ToColumnString(this Column column)
         {
-            if (column.IsCharacterType && column.Size <= 0)
-                throw new Exception("Please inform a size.");
-            else if (column.IsDecimalType && (column.Precision <= 0 || column.Scale <= 0))
-                throw new Exception("Please inform precision and scale.");
+            string columnString = $"{column.Name} {column.Type.GetDbType()}";
 
-            if (column.IsCharacterType)
-                return $"{column.Name} {column.Type.GetDbType()} ({column.Size})";
-            else if (column.IsDecimalType)
-                return $"{column.Name} {column.Type.GetDbType()} ({column.Precision}, {column.Scale})";
-            else
-                return $"{column.Name} {column.Type.GetDbType()}";
+            if (column.Size > 0)
+                columnString += $"({column.Size})";
+            else if (column.Precision > 0 && column.Scale > 0)
+                columnString += $"({column.Precision}, {column.Scale})";
+            if (column.PrimaryKey)
+                columnString += "PRIMARY KEY";
+            if (!column.Nullable)
+                columnString += "NOT NULL";
+
+            return columnString;
         }
     }
 }

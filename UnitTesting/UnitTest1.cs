@@ -15,99 +15,76 @@ namespace UnitTesting
         {
             Database db = new Database("Eloan", "Eloan_Log");
 
+
             List<Table> tables = new List<Table>
             {
-                new Table
+                new Table("Users", new List<Column>
                 {
-                    Name = "Users",
-                    Columns = new List<Column>
-                    {
-                        new Column("Username",  typeof(string), 220),
-                        new Column("Password",  typeof(string), 220),
-                    }
-                },
-                new Table
+                       new Column("Username", i => i.String(200)),
+                       new Column("Password", i => i.String(200)),
+                }),
+                new Table("Client", new List<Column>
                 {
-                    Name = "Client",
-                    Columns = new List<Column>
-                    {
-                        new Column("Name",  typeof(string), 220),
-                        new Column("Cpf",  typeof(string), 50),
-                        new Column("BirthDate",  typeof(DateTime)),
-                        new Column("IdentificationDocument",  typeof(string),  60),
-                        new Column("IssuingBody",  typeof(string), 100),
-                        new Column("Nacionality",  typeof(string), 120),
-                        new Column("Naturality",  typeof(string), 120),
-                        new Column("MotherName",  typeof(string), 120),
-                        new Column("FatherName",  typeof(string), 120),
-                        new Column("Profission",  typeof(string), 120),
-                        new Column("CivilState",  typeof(int))
-                    }
-                },
-                new Table
+                    new Column("Name",  i => i.String(120)),
+                    new Column("Cpf",  i => i.String(120)),
+                    new Column("BirthDate",  i => i.DateTime()),
+                    new Column("IdentificationDocument",  i => i.String(200)),
+                    new Column("IssuingBody",  i => i.String(200)),
+                    new Column("Nacionality",  i => i.String(200)),
+                    new Column("Naturality",  i => i.String(200)),
+                    new Column("MotherName",  i => i.String(200)),
+                    new Column("FatherName",  i => i.String(200)),
+                    new Column("Profission",  i => i.String(200)),
+                    new Column("CivilState",  i => i.Int())
+                }),
+                new Table("ClientAddress", new List<Column>
                 {
-                    Name = "ClientAddress",
-                    Columns = new List<Column>
-                    {
-                        new Column("ClientId",  typeof(Guid)),
-                        new Column("ZipCode",  typeof(string), 50),
-                        new Column("Street",  typeof(DateTime)),
-                        new Column("Number",  typeof(string), 60),
-                        new Column("Complement",  typeof(string), 100),
-                        new Column("County",  typeof(string),  120),
-                        new Column("City",  typeof(string),120),
-                        new Column("State",  typeof(string), 120),
-                        new Column("IsMain",  typeof(bool))
-                    }
-                },
-                new Table
+                    new Column("ClientId",  i => i.Guid()),
+                    new Column("ZipCode",  i => i.String(200)),
+                    new Column("Street",  i => i.String(200)),
+                    new Column("Number",  i => i.String(200)),
+                    new Column("Complement",  i => i.String(200)),
+                    new Column("County",  i => i.String(200)),
+                    new Column("City",  i => i.String(200)),
+                    new Column("State",  i => i.String(200)),
+                    new Column("IsMain",  i => i.Bool())
+                }),
+                new Table("Contact", new List<Column>
                 {
-                    Name = "Contact",
-                    Columns = new List<Column>
-                    {
-                        new Column("ClientId",  typeof(Guid)),
-                        new Column("Description",  typeof(string), 50),
-                        new Column("Type",  typeof(int)),
-                        new Column("Contact",  typeof(string), 120),
-                    }
-                },
-                new Table
+                    new Column("ClientId",  i => i.Guid()),
+                    new Column("Description",  i => i.String(200)),
+                    new Column("Type",  i => i.Int()),
+                    new Column("Contact",  i => i.String(200)),
+                }),
+                new Table("BankAccount", new List<Column>
                 {
-                    Name = "BankAccount",
-                    Columns = new List<Column>
-                    {
-                        new Column("ClientId",  typeof(Guid)),
-                        new Column("Type",  typeof(int)),
-                        new Column("Bank",  typeof(string), 120),
-                        new Column("Agency",  typeof(int)),
-                        new Column("AgencyDigit",  typeof(int)),
-                        new Column("Account",  typeof(int)),
-                        new Column("AccountDigit",  typeof(int)),
-                    }
-                },
-                new Table
+                    new Column("ClientId",  i => i.Guid()),
+                    new Column("Type",  i => i.Int()),
+                    new Column("Bank",  i => i.String(120)),
+                    new Column("Agency",  i => i.Int()),
+                    new Column("AgencyDigit",  i => i.Int()),
+                    new Column("Account",  i => i.Int()),
+                    new Column("AccountDigit",  i => i.Int()),
+                }),
+                new Table("Operation", new List<Column>
                 {
-                    Name = "Operation",
-                    Columns = new List<Column>
-                    {
-                        new Column("ClientId", typeof(Guid)),
-                        new Column("BankAccountId", typeof(Guid)),
-                        new Column("Date", typeof(DateTime)),
-                        new Column("RequestedValue", typeof(decimal), 16, 2),
-                        new Column("Quota", typeof(int)),
-                        new Column("FirstExpiration", typeof(DateTime)),
-                        new Column("RemunerativeFeePerMonth", typeof(decimal), 5, 2),
-                        new Column("RemunerativeFeePerYear", typeof(decimal), 5, 2),
-                        new Column("IofPercentage", typeof(decimal), 5, 2),
-                        new Column("ContractValue", typeof(decimal), 16, 2),
-                        new Column("TecPerYear", typeof(decimal), 16, 2),
-                        new Column("TecPerMonth", typeof(decimal), 16, 2),
-                        new Column("TotalFianancedValue", typeof(decimal), 16, 2),
-                    }
-                }
+                    new Column("ClientId", i => i.Guid()),
+                    new Column("BankAccountId", i => i.Guid()),
+                    new Column("Date", i => i.DateTime()),
+                    new Column("RequestedValue", i => i.Decimal(16, 2)),
+                    new Column("Quota", i => i.Int()),
+                    new Column("FirstExpiration", i => i.DateTime()),
+                    new Column("RemunerativeFeePerMonth", i => i.Decimal(5, 2)),
+                    new Column("RemunerativeFeePerYear", i => i.Decimal(5, 2)),
+                    new Column("IofPercentage", i => i.Decimal(5, 2)),
+                    new Column("ContractValue", i => i.Decimal(16, 2)),
+                    new Column("TecPerYear", i => i.Decimal(16, 2)),
+                    new Column("TecPerMonth", i => i.Decimal(16, 2)),
+                    new Column("TotalFianancedValue", i => i.Decimal(16, 2)),
+                })
             };
 
-            foreach(Table t in tables)
+            foreach (Table t in tables)
             {
                 t.Columns.InsertRange(0, GetCommonColumns());
             }
@@ -128,9 +105,9 @@ namespace UnitTesting
         {
             return new List<Column>
             {
-                new Column("Id",  typeof(Guid)),
-                new Column("RegistrationDate",  typeof(DateTime)),
-                new Column("IsDeleted",  typeof(bool))
+                new Column("Id",  i => i.Guid()),
+                new Column("RegistrationDate",  i => i.DateTime()),
+                new Column("IsDeleted",  i => i.Bool())
             };
         }
     }
