@@ -56,6 +56,7 @@ namespace DatabaseManager.ManagerEntities
             PrimaryKey = primaryKey;
             Precision = precision;
             Scale = scale;
+            Type = typeof(decimal);
             return this;
         }
 
@@ -63,6 +64,7 @@ namespace DatabaseManager.ManagerEntities
         {
             Precision = precision;
             Scale = scale;
+            Type = typeof(decimal);
             return this;
         }
 

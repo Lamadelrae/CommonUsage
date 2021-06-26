@@ -17,5 +17,9 @@ namespace DatabaseManager.SystemEntities
         public string NUMERIC_PRECISION { get; set; }
 
         public string NUMERIC_SCALE { get; set; }
+
+        public bool IS_NULLABLE { get; set; }
+
+        public bool IS_PRIMARY_KEY { get; set; }
     }
 }

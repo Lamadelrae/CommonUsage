@@ -1,0 +1,119 @@
+﻿using DatabaseManager.ManagerEntities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Utils;
+
+namespace DatabaseManager.Extensions
+{
+    public static class QueryParser
+    {
+        public static string GetCreateTable(this Table table)
+        {
+            string sql = string.Empty;
+            sql += $"CREATE TABLE {table.Name} (";
+
+            string columnSql = string.Empty;
+            foreach (Column column in table.Columns)
+            {
+                if (string.IsNullOrEmpty(columnSql))
+                    columnSql += column.ToColumnString();
+                else
+                    columnSql += $", {column.ToColumnString()}";
+            }
+
+            sql += columnSql;
+            sql += " )";
+
+            return sql;
+        }
+
+        public static string GetTableModifications(this Table memoryTable, Table dbTable)
+        {
+            string script = string.Empty;
+            foreach (Column memoryColumn in memoryTable.Columns)
+            {
+                Column dbColumn = dbTable.Columns.Where(i => i.Name == memoryColumn.Name).FirstOrDefault();
+                if (dbColumn.IsNull())
+                    script += memoryColumn.GetAddColumn(memoryTable.Name);
+                else if (!memoryColumn.Equals(dbColumn))
+                    script += memoryColumn.GetAlterColumn(memoryTable.Name);
+            }
+            return script;
+        }
+
+        public static string GetAddColumn(this Column column, string tableName)
+        {
+            return $"ALTER TABLE {tableName} ADD {column.ToColumnString()};\n";
+        }
+
+        public static string GetAlterColumn(this Column column, string tableName)
+        {
+            return $"ALTER TABLE {tableName} ALTER COLUMN {column.ToColumnString()};\n";
+        }
+
+        public static string GetCreateDatabase(this Database db)
+        {
+            return @$"CREATE DATABASE {db.Name} ON PRIMARY (NAME = {db.Name},  FILENAME = '{db.FileName}',  SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%)
+                     LOG ON (NAME = {db.LogName},  FILENAME = '{db.LogFileName}',  SIZE = 1MB,  MAXSIZE = 10MB, FILEGROWTH = 10%)";
+        }
+
+        public static string ToColumnString(this Column column)
+        {
+            string columnString = $"{column.Name} {column.Type.GetDbType()}";
+
+            if (column.Size > 0)
+                columnString += $"({column.Size})";
+            else if (column.Precision > 0 && column.Scale > 0)
+                columnString += $"({column.Precision}, {column.Scale})";
+            if (column.PrimaryKey)
+                columnString += " PRIMARY KEY";
+            if (!column.Nullable)
+                columnString += " NOT NULL";
+
+            return columnString;
+        }
+
+        public static string GetDbType(this Type type)
+        {
+            if (type.Equals(typeof(int)))
+                return "INT";
+            else if (type.Equals(typeof(decimal)))
+                return "DECIMAL";
+            else if (type.Equals(typeof(DateTime)))
+                return "DATETIME";
+            else if (type.Equals(typeof(bool)))
+                return "BIT";
+            else if (type.Equals(typeof(string)))
+                return "VARCHAR";
+            else if (type.Equals(typeof(Guid)))
+                return "UNIQUEIDENTIFIER";
+            else if (type.Equals(typeof(char)))
+                return "CHAR";
+            else
+                throw new NotSupportedException();
+        }
+
+        public static Type GetSystemType(this string type)
+        {
+            if (type.Equals("INT"))
+                return typeof(int);
+            else if (type.Equals("DECIMAL"))
+                return typeof(decimal);
+            else if (type.Equals("DATETIME") || type.Equals("DATE"))
+                return typeof(DateTime);
+            else if (type.Equals("BIT"))
+                return typeof(bool);
+            else if (type.Equals("VARCHAR"))
+                return typeof(string);
+            else if (type.Equals("UNIQUEIDENTIFIER"))
+                return typeof(Guid);
+            else if (type.Equals("CHAR"))
+                return typeof(char);
+            else
+                throw new NotSupportedException();
+        }
+    }
+}

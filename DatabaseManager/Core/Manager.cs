@@ -49,12 +49,12 @@ namespace DatabaseManager.Core
         private void CreateDatabase()
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetServerConnection));
-            db.ExecuteCommand(Database.ToCreateDdl());
+            db.ExecuteCommand(Database.GetCreateDatabase());
 
             db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
             foreach (Table table in Tables)
             {
-                db.ExecuteCommand(table.ToCreateDdl());
+                db.ExecuteCommand(table.GetCreateTable());
             }
         }
 
@@ -67,40 +67,10 @@ namespace DatabaseManager.Core
                 Table dbTable = GetDbTable(memoryTable.Name);
 
                 if (dbTable.IsNull())
-                    db.ExecuteCommand(memoryTable.ToCreateDdl());
-                else if (TableIsModified(memoryTable, dbTable))
-                    db.ExecuteCommand(GetTableModifications(memoryTable, dbTable));
+                    db.ExecuteCommand(memoryTable.GetCreateTable());
+                else if (!memoryTable.Equals(dbTable))
+                    db.ExecuteCommand(memoryTable.GetTableModifications(dbTable));
             }
-        }
-
-        public bool TableIsModified(Table memoryTable, Table dbTable)
-        {
-            foreach (Column memoryColumn in memoryTable.Columns)
-            {
-                Column dbColumn = dbTable.Columns.Where(i => i.Name == memoryColumn.Name).FirstOrDefault();
-
-                if (dbColumn.IsNull())
-                    return true;
-                else if (memoryColumn.Size != dbColumn.Size || memoryColumn.Type != dbColumn.Type)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public string GetTableModifications(Table memoryTable, Table dbTable)
-        {
-            string script = string.Empty;
-            foreach (Column memoryColumn in memoryTable.Columns)
-            {
-                Column dbColumn = dbTable.Columns.Where(i => i.Name == memoryColumn.Name).FirstOrDefault();
-
-                if (dbColumn.IsNull())
-                    script += memoryColumn.ToCreateDdl(memoryTable.Name);
-                else if (memoryColumn.Size != dbColumn.Size || memoryColumn.Type != dbColumn.Type)
-                    script += memoryColumn.ToAlterDdl(memoryTable.Name);
-            }
-            return script;
         }
 
         private Table GetDbTable(string tableName)
@@ -123,7 +93,17 @@ namespace DatabaseManager.Core
         {
             DataCore<InformationSchemaColumn> db = new DataCore<InformationSchemaColumn>(new SqlConnection(Connection.GetDatabaseConnection));
 
-            string sql = @"SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE As Precision FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME= @TableName";
+            string sql = @"SELECT Columns.COLUMN_NAME,
+			                DATA_TYPE,
+			                CHARACTER_MAXIMUM_LENGTH,
+			                NUMERIC_PRECISION,
+			                NUMERIC_SCALE,
+                            (CASE WHEN IS_NULLABLE = 'YES' THEN 1 ELSE 0 END ) IS_NULLABLE,
+                            (CASE WHEN CONSTRAINT_NAME IS NOT NULL THEN 1 ELSE 0 END) IS_PRIMARY_KEY
+                           FROM INFORMATION_SCHEMA.COLUMNS Columns
+                                LEFT JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Constraints  ON Columns.COLUMN_NAME = Constraints.COLUMN_NAME
+                           WHERE columns.TABLE_NAME= @TableName";
+
             foreach (InformationSchemaColumn column in db.ExecuteQuery(sql, new { TableName = tableName }))
             {
                 yield return new Column()
@@ -133,6 +113,8 @@ namespace DatabaseManager.Core
                     Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Precision = column.NUMERIC_PRECISION.IsNotNullOrEmpty() ? column.NUMERIC_PRECISION.ToInt() : 0,
                     Scale = column.NUMERIC_SCALE.IsNotNullOrEmpty() ? column.NUMERIC_SCALE.ToInt() : 0,
+                    Nullable = column.IS_NULLABLE,
+                    PrimaryKey = column.IS_PRIMARY_KEY
                 };
             }
         }
