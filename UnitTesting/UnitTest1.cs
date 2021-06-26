@@ -22,9 +22,10 @@ namespace UnitTesting
                    Name = "FUCK_TABLES_MAN",
                    Columns = new List<Column>
                    {
-                       new Column { Name = "TEST_VARCHAR", Size = 120, Type = typeof(string)},
+                       new Column { Name = "TEST_VARCHAR", Size = 40, Type = typeof(string)},
                        new Column { Name = "TEST_INT", Type = typeof(int)},
                        new Column { Name = "TEST_DATE", Type = typeof(DateTime)},
+                       new Column { Name = "TEST_ANOTHER_DATE", Type = typeof(DateTime)},
                    }
                 }
             };

@@ -83,7 +83,7 @@ namespace DatabaseManager.Core
             string script = string.Empty;
             foreach (Column memoryColumn in memoryTable.Columns)
             {
-                if (dbTable.Columns.Where(i => i.Name == memoryColumn.Name).IsNull())
+                if (dbTable.Columns.Where(i => i.Name == memoryColumn.Name).FirstOrDefault().IsNull())
                     script += $"ALTER TABLE {memoryTable.Name} ADD {memoryColumn.ToColumnString()};\n";
                 else
                 {
@@ -98,23 +98,34 @@ namespace DatabaseManager.Core
 
         private Table GetDbTable(string tableName)
         {
-            DataCore<Table> db = new DataCore<Table>(new SqlConnection(Connection.GetDatabaseConnection));
-            string sql = @"SELECT TABLE_NAME Name FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @TableName";
+            DataCore<InformationSchemaTable> db = new DataCore<InformationSchemaTable>(new SqlConnection(Connection.GetDatabaseConnection));
+            string sql = @"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @TableName";
 
-            Table table = db.ExecuteQuery(sql, new { TableName = tableName }).FirstOrDefault();
-            if (table.IsNotNull())
-                table.Columns = GetColumns(table.Name);
+            InformationSchemaTable table = db.ExecuteQuery(sql, new { TableName = tableName }).FirstOrDefault();
+            if (table.IsNull())
+                throw new Exception("Table does not exist");
 
-            return table;
+            return new Table
+            {
+                Name = table.TABLE_NAME,
+                Columns = GetColumns(table.TABLE_NAME).ToList()
+            };
         }
 
-        private List<Column> GetColumns(string tableName)
+        private IEnumerable<Column> GetColumns(string tableName)
         {
-            DataCore<Column> db = new DataCore<Column>(new SqlConnection(Connection.GetDatabaseConnection));
+            DataCore<InformationSchemaColumn> db = new DataCore<InformationSchemaColumn>(new SqlConnection(Connection.GetDatabaseConnection));
 
-            string sql = @$"SELECT COLUMN_NAME Name, DATA_TYPE Type, CHARACTER_MAXIMUM_LENGTH Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME= @TableName";
-
-            return db.ExecuteQuery(sql, new { TableName = tableName });
+            string sql = @$"SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME= @TableName";
+            foreach (InformationSchemaColumn column in db.ExecuteQuery(sql, new { TableName = tableName }))
+            {
+                yield return new Column
+                {
+                    Name = column.COLUMN_NAME,
+                    Size = column.CHARACTER_MAXIMUM_LENGTH.IsNotNullOrEmpty() ? column.CHARACTER_MAXIMUM_LENGTH.ToInt() : 0,
+                    Type = column.DATA_TYPE.ToUpper().GetSystemType()
+                };
+            }
         }
     }
 }
