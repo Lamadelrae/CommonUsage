@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace DatabaseManager.Extensions
 {
@@ -49,7 +50,7 @@ namespace DatabaseManager.Extensions
                 throw new NotSupportedException();
         }
 
-        public static string ToDdl(this Table table)
+        public static string ToCreateDdl(this Table table)
         {
             string sql = string.Empty;
             sql += $"CREATE TABLE {table.Name} (";
@@ -69,18 +70,35 @@ namespace DatabaseManager.Extensions
             return sql;
         }
 
-        public static string ToColumnString(this Column column)
+        public static string ToCreateDdl(this Column column, string tableName)
         {
-            if (column.Type.Equals(typeof(string)) && column.Size > 0)
-                return $"{column.Name} {column.Type.GetDbType()} ({column.Size})";
-            else
-                return $"{column.Name} {column.Type.GetDbType()}";
+            return $"ALTER TABLE {tableName} ADD {column.ToColumnString()};\n";
         }
 
-        public static string ToDdl(this Database db)
+        public static string ToAlterDdl(this Column column, string tableName)
+        {
+            return $"ALTER TABLE {tableName} ALTER COLUMN {column.ToColumnString()};\n";
+        }
+
+        public static string ToCreateDdl(this Database db)
         {
             return @$"CREATE DATABASE {db.Name} ON PRIMARY (NAME = {db.Name},  FILENAME = '{db.FileName}',  SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%)
                      LOG ON (NAME = {db.LogName},  FILENAME = '{db.LogFileName}',  SIZE = 1MB,  MAXSIZE = 10MB, FILEGROWTH = 10%)";
+        }
+
+        public static string ToColumnString(this Column column)
+        {
+            if (column.IsCharacterType && column.Size <= 0)
+                throw new Exception("Please inform a size.");
+            else if (column.IsDecimalType && (column.Precision <= 0 || column.Scale <= 0))
+                throw new Exception("Please inform precision and scale.");
+
+            if (column.IsCharacterType)
+                return $"{column.Name} {column.Type.GetDbType()} ({column.Size})";
+            else if (column.IsDecimalType)
+                return $"{column.Name} {column.Type.GetDbType()} ({column.Precision}, {column.Scale})";
+            else
+                return $"{column.Name} {column.Type.GetDbType()}";
         }
     }
 }
