@@ -43,6 +43,11 @@ namespace Utils
             return string.IsNullOrEmpty(inputString);
         }
 
+        public static bool IsNotNullOrEmpty(this string input)
+        {
+            return !string.IsNullOrEmpty(input);
+        }
+
         public static bool IsNullOrLessThanOne(this string input)
         {
             return input == null || input.Length < 1;

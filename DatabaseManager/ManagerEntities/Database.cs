@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DatabaseManager
+namespace DatabaseManager.ManagerEntities
 {
     public class Database
     {
@@ -33,12 +33,6 @@ namespace DatabaseManager
             {
                 return $@"{AppDomain.CurrentDomain.BaseDirectory}\{LogName}.ldf";
             }
-        }
-
-        public override string ToString()
-        {
-            return @$"CREATE DATABASE {Name} ON PRIMARY (NAME = {Name},  FILENAME = '{FileName}',  SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%)
-                                           LOG ON (NAME = {LogName},  FILENAME = '{LogFileName}',  SIZE = 1MB,  MAXSIZE = 10MB, FILEGROWTH = 10%)";
         }
     }
 

@@ -10,10 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataCore\DataCore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ManagerEntities\" />
+    <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DatabaseManager.ManagerEntities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DatabaseManager
+namespace DatabaseManager.Extensions
 {
     public static class ManagerExtensions
     {
@@ -48,7 +49,7 @@ namespace DatabaseManager
                 throw new NotSupportedException();
         }
 
-        public static string GetDdl(this Table table)
+        public static string ToDdl(this Table table)
         {
             string sql = string.Empty;
             sql += $"CREATE TABLE {table.Name} (";
@@ -56,22 +57,30 @@ namespace DatabaseManager
             string columnSql = string.Empty;
             foreach (Column column in table.Columns)
             {
-                string columnString = string.Empty;
-                if (column.Type.Equals(typeof(string)) && column.Size > 0)
-                    columnString = $"{column.Name} {column.Type.GetDbType()} ({column.Size})";
-                else
-                    columnString = $"{column.Name} {column.Type.GetDbType()}";
-
                 if (string.IsNullOrEmpty(columnSql))
-                    columnSql += column.ToString();
+                    columnSql += column.ToColumnString();
                 else
-                    columnSql += $", {column.ToString()}";
+                    columnSql += $", {column.ToColumnString()}";
             }
 
             sql += columnSql;
             sql += " )";
 
             return sql;
+        }
+
+        public static string ToColumnString(this Column column)
+        {
+            if (column.Type.Equals(typeof(string)) && column.Size > 0)
+                return $"{column.Name} {column.Type.GetDbType()} ({column.Size})";
+            else
+                return $"{column.Name} {column.Type.GetDbType()}";
+        }
+
+        public static string ToDdl(this Database db)
+        {
+            return @$"CREATE DATABASE {db.Name} ON PRIMARY (NAME = {db.Name},  FILENAME = '{db.FileName}',  SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%)
+                     LOG ON (NAME = {db.LogName},  FILENAME = '{db.LogFileName}',  SIZE = 1MB,  MAXSIZE = 10MB, FILEGROWTH = 10%)";
         }
     }
 }
