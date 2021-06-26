@@ -103,7 +103,7 @@ namespace DatabaseManager.Core
 
             InformationSchemaTable table = db.ExecuteQuery(sql, new { TableName = tableName }).FirstOrDefault();
             if (table.IsNull())
-                throw new Exception("Table does not exist");
+                return null;
 
             return new Table
             {

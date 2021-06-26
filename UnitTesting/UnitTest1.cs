@@ -26,17 +26,30 @@ namespace UnitTesting
                        new Column { Name = "TEST_INT", Type = typeof(int)},
                        new Column { Name = "TEST_DATE", Type = typeof(DateTime)},
                        new Column { Name = "TEST_ANOTHER_DATE", Type = typeof(DateTime)},
+                       new Column { Name = "TEST_SOME_ID", Type = typeof(Guid)},
+                   }
+                },
+                new Table
+                {
+                   Name = "VAI_SE_FODER",
+                   Columns = new List<Column>
+                   {
+                       new Column { Name = "TEST_VARCHAR", Size = 40, Type = typeof(string)},
+                       new Column { Name = "TEST_INT", Type = typeof(int)},
+                       new Column { Name = "TEST_DATE", Type = typeof(DateTime)},
+                       new Column { Name = "TEST_ANOTHER_DATE", Type = typeof(DateTime)},
+                       new Column { Name = "TEST_SOME_ID", Type = typeof(Guid)},
                    }
                 }
             };
 
-             DatabaseConnection connection = new DatabaseConnection(initialCatalog: "TESTING_DB",
-                                                                    applicationName: string.Empty,
-                                                                    dataSouce: @"Localhost\SQL2019",
-                                                                    userId: "sa",
-                                                                    password: "pass123",
-                                                                    timeout: 30);
-            
+            DatabaseConnection connection = new DatabaseConnection(initialCatalog: "TESTING_DB",
+                                                                   applicationName: string.Empty,
+                                                                   dataSouce: @"Localhost\SQL2019",
+                                                                   userId: "sa",
+                                                                   password: "pass123",
+                                                                   timeout: 30);
+
             Manager dbManager = new Manager(db, tables, connection);
             dbManager.Setup();
         }
