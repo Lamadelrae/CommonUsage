@@ -50,14 +50,11 @@ namespace DatabaseManager.Core
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetServerConnection));
             DmlBuilder dmlBuilder = new DmlBuilder(Database, Tables);
-            List<string> scripts = dmlBuilder.GenerateCreateScript().ToList();
 
-            db.ExecuteCommand(scripts.FirstOrDefault());
-            scripts.Remove(scripts.FirstOrDefault());
-
+            db.ExecuteCommand(dmlBuilder.GenerateCreateScript().FirstOrDefault());
             db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
 
-            foreach (string script in scripts)
+            foreach (string script in dmlBuilder.GenerateCreateScript().Skip(1))
             {
                 db.ExecuteCommand(script);
             }
