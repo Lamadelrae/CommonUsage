@@ -30,7 +30,7 @@ namespace DatabaseManager.Core
             Connection = connection;
         }
 
-        public void Setup()
+        public void RunProcess()
         {
             if (DbNotExists())
                 CreateDatabase();

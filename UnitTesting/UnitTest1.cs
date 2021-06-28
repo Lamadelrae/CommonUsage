@@ -21,6 +21,11 @@ namespace UnitTesting
                                                                    userId: "sa",
                                                                    password: "pass123",
                                                                    timeout: 30);
+            new Manager(db, GetTables(), connection).RunProcess();
+        }
+
+        private List<Table> GetTables()
+        {
             List<Table> tables = new List<Table>
             {
                 new Table("Users", new List<Column>
@@ -91,8 +96,7 @@ namespace UnitTesting
 
             InsertCommonTables(tables);
 
-            Manager dbManager = new Manager(db, tables, connection);
-            dbManager.Setup();
+            return tables;
         }
 
         private void InsertCommonTables(List<Table> tables)
