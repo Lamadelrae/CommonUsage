@@ -51,7 +51,7 @@ namespace DataCore
             DataTable dataTable = GetDataTable(sqlCommand);
             Connection.Close();
 
-            return GetObjList(dataTable);
+            return GetObjList<T>(dataTable);
         }
 
         public List<T> ExecuteQuery(string sql)
@@ -62,7 +62,30 @@ namespace DataCore
             DataTable dataTable = GetDataTable(sqlCommand);
             Connection.Close();
 
-            return GetObjList(dataTable);
+            return GetObjList<T>(dataTable);
+        }
+
+        public List<K> ExecuteQuery<K>(string sql, object param)
+        {
+            SqlCommand sqlCommand = new SqlCommand(sql, Connection);
+            sqlCommand.Parameters.AddRange(GetParameters(param).ToArray());
+
+            Connection.Open();
+            DataTable dataTable = GetDataTable(sqlCommand);
+            Connection.Close();
+
+            return GetObjList<K>(dataTable);
+        }
+
+        public List<K> ExecuteQuery<K>(string sql)
+        {
+            SqlCommand sqlCommand = new SqlCommand(sql, Connection);
+
+            Connection.Open();
+            DataTable dataTable = GetDataTable(sqlCommand);
+            Connection.Close();
+
+            return GetObjList<K>(dataTable);
         }
 
         private DataTable GetDataTable(SqlCommand sqlCommand)
@@ -85,15 +108,15 @@ namespace DataCore
             }
         }
 
-        private List<T> GetObjList(DataTable table)
+        private List<K> GetObjList<K>(DataTable table)
         {
             try
             {
-                List<T> list = new List<T>();
+                List<K> list = new List<K>();
 
                 foreach (DataRow row in table.Rows)
                 {
-                    T obj = (T)Activator.CreateInstance(typeof(T));
+                    K obj = (K)Activator.CreateInstance(typeof(K));
 
                     foreach (var prop in obj.GetType().GetProperties())
                     {

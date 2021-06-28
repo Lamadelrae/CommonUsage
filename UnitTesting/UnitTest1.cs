@@ -104,7 +104,7 @@ namespace UnitTesting
             List<Column> commonColumns = new List<Column>
             {
                 new Column("Id",  i => i.Guid(primaryKey: true)),
-                new Column("RegistrationDate",  i => i.DateTime(nullable: false, primaryKey: false)),
+                new Column("RegistrationDate",  i => i.DateTime()),
                 new Column("IsDeleted",  i => i.Bool())
             };
 
