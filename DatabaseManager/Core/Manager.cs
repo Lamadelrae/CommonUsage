@@ -1,6 +1,7 @@
 ﻿using DatabaseManager.Extensions;
 using DatabaseManager.ManagerEntities;
 using DatabaseManager.SystemEntities;
+using DatabaseManager.Utils;
 using DataCore;
 using System;
 using System.Collections.Generic;
@@ -42,51 +43,48 @@ namespace DatabaseManager.Core
             DataCore<SysDatabases> db = new DataCore<SysDatabases>(new SqlConnection(Connection.GetServerConnection));
             string sql = @$"SELECT name Name FROM master.dbo.sysdatabases WHERE ('[' + name + ']' = @DatabaseName OR name = @DatabaseName)";
 
-            return db.ExecuteQuery(sql, new { DatabaseName = Database.Name }).Count() == 0;
+            return db.ExecuteQuery(sql, new { DatabaseName = Database.Name }).Count == 0;
         }
-
 
         private void CreateDatabase()
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetServerConnection));
-            db.ExecuteCommand(Database.GetCreateDatabase());
+            DmlBuilder dmlBuilder = new DmlBuilder(Database, Tables);
+            List<string> scripts = dmlBuilder.GenerateCreateScript().ToList();
+            db.ExecuteCommand(scripts.FirstOrDefault()); // Create Database.
 
             db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
-            foreach (Table table in Tables)
+            foreach (string script in scripts)
             {
-                db.ExecuteCommand(table.GetCreateTable());
+                db.ExecuteCommand(script);
             }
         }
 
         public void UpdateDatabase()
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
+            DmlBuilder dmlBuilder = new DmlBuilder(Tables, GetDbTables().ToList());
 
-            foreach (Table memoryTable in Tables)
+            foreach (string script in dmlBuilder.GenerateUpdateScript())
             {
-                Table dbTable = GetDbTable(memoryTable.Name);
-
-                if (dbTable.IsNull())
-                    db.ExecuteCommand(memoryTable.GetCreateTable());
-                else if (!memoryTable.Equals(dbTable))
-                    db.ExecuteCommand(memoryTable.GetTableModifications(dbTable));
+                db.ExecuteCommand(script);
             }
+
         }
 
-        private Table GetDbTable(string tableName)
+        private IEnumerable<Table> GetDbTables()
         {
             DataCore<InformationSchemaTable> db = new DataCore<InformationSchemaTable>(new SqlConnection(Connection.GetDatabaseConnection));
-            string sql = @"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @TableName";
+            string sql = @"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
 
-            InformationSchemaTable table = db.ExecuteQuery(sql, new { TableName = tableName }).FirstOrDefault();
-            if (table.IsNull())
-                return null;
-
-            return new Table()
+            foreach (InformationSchemaTable table in db.ExecuteQuery(sql))
             {
-                Name = table.TABLE_NAME,
-                Columns = GetDbColumns(table.TABLE_NAME).ToList()
-            };
+                yield return new Table()
+                {
+                    Name = table.TABLE_NAME,
+                    Columns = GetDbColumns(table.TABLE_NAME).ToList()
+                };
+            }
         }
 
         private IEnumerable<Column> GetDbColumns(string tableName)
@@ -110,9 +108,9 @@ namespace DatabaseManager.Core
                 {
                     Name = column.COLUMN_NAME,
                     Size = column.CHARACTER_MAXIMUM_LENGTH.IsNotNullOrEmpty() ? column.CHARACTER_MAXIMUM_LENGTH.ToInt() : 0,
-                    Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Precision = column.NUMERIC_PRECISION.IsNotNullOrEmpty() ? column.NUMERIC_PRECISION.ToInt() : 0,
                     Scale = column.NUMERIC_SCALE.IsNotNullOrEmpty() ? column.NUMERIC_SCALE.ToInt() : 0,
+                    Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Nullable = column.IS_NULLABLE,
                     PrimaryKey = column.IS_PRIMARY_KEY
                 };

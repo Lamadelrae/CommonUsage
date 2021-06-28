@@ -15,7 +15,12 @@ namespace UnitTesting
         {
             Database db = new Database("Eloan", "Eloan_Log");
 
-            DatabaseConnection connection = new DatabaseConnection(initialCatalog: db.Name, applicationName: string.Empty, dataSouce: @"Localhost\SQL2019", userId: "sa", password: "pass123", timeout: 30);
+            DatabaseConnection connection = new DatabaseConnection(initialCatalog: db.Name,
+                                                                   applicationName: string.Empty,
+                                                                   dataSouce: @"Localhost\SQL2019",
+                                                                   userId: "sa",
+                                                                   password: "pass123",
+                                                                   timeout: 30);
 
             List<Table> tables = new List<Table>
             {
@@ -26,24 +31,25 @@ namespace UnitTesting
                        new Column("DECIMAL_TEST", i => i.Decimal(16, 2)),
                 })
             };
-
-            foreach (Table t in tables)
-            {
-                t.Columns.InsertRange(0, GetCommonColumns());
-            }
+            InsertCommonTables(tables);
 
             Manager dbManager = new Manager(db, tables, connection);
             dbManager.Setup();
         }
 
-        private List<Column> GetCommonColumns()
+        private void InsertCommonTables(List<Table> tables)
         {
-            return new List<Column>
+            List<Column> commonColumns = new List<Column>
             {
-                new Column("Id",  i => i.Guid(nullable: true, primaryKey: false)),
-                new Column("RegistrationDate",  i => i.DateTime()),
+                new Column("Id",  i => i.Guid(nullable: true, primaryKey: true)),
+                new Column("RegistrationDate",  i => i.DateTime(nullable: true, primaryKey: false)),
                 new Column("IsDeleted",  i => i.Bool())
             };
+
+            foreach (Table table in tables)
+            {
+                table.Columns.InsertRange(0, commonColumns);
+            }
         }
     }
 }
