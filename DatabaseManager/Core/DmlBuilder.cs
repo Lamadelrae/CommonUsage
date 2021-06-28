@@ -66,11 +66,11 @@ namespace DatabaseManager.Core
             else if (columnDifference.Action == ColumnAction.DropColumn)
                 return GetTableByName(DbTables, columnDifference.TableName).DropColumn(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.AddPk)
-                return GetTableByName(MemoryTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
+                return GetTableByName(MemoryTables, columnDifference.TableName).AddPk(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.DropPk)
-                return GetTableByName(DbTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
+                return GetTableByName(DbTables, columnDifference.TableName).DropPk(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.ModifyColumn)
-                return GetTableByName(MemoryTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
+                return GetTableByName(MemoryTables, columnDifference.TableName).ModifyColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
             else
                 throw new NotSupportedException();
         }
