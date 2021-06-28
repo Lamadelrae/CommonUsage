@@ -30,6 +30,12 @@ namespace DatabaseManager.Utils
                     columns += $", {CreateColumn(column)}";
             }
 
+            if (table.Columns.Any(i => i.PrimaryKey))
+            {
+                Column pkColumn = table.Columns.Where(i => i.PrimaryKey).FirstOrDefault();
+                columns += $", CONSTRAINT PK_{table.Name}_{pkColumn.Name} PRIMARY KEY ({pkColumn.Name})";
+            }
+
             sql += columns;
             sql += " );";
 
@@ -43,14 +49,14 @@ namespace DatabaseManager.Utils
 
         public static string AddColumn(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name}";
+            string sql = $"ALTER TABLE {table.Name} ";
             sql += $"ADD {CreateColumn(column)};";
             return sql;
         }
 
         public static string DropColumn(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name}";
+            string sql = $"ALTER TABLE {table.Name} ";
             sql += $"DROP COLUMN {column.Name};";
             return sql;
 
@@ -58,23 +64,23 @@ namespace DatabaseManager.Utils
 
         public static string AddPk(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name}";
+            string sql = $"ALTER TABLE {table.Name} ";
             sql += $"ADD CONSTRAINT PK_{table.Name}_{column.Name} PRIMARY KEY({column.Name});";
             return sql;
         }
 
         public static string DropPk(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name}";
+            string sql = $"ALTER TABLE {table.Name} ";
             sql += $"DROP CONSTRAINT PK_{table.Name}_{column.Name};";
             return sql;
         }
 
         public static string ModifyColumn(this Table table, Column column)
         {
-            string sql = $"ALER TABLE {table.Name}";
-            sql += $"ALTER COLUMN {column.Name}";
-            sql += $" {column.Type.GetDbType()}";
+            string sql = $"ALTER TABLE {table.Name} ";
+            sql += $"ALTER COLUMN {column.Name} ";
+            sql += $"{column.Type.GetDbType()}";
             if (column.Size > 0)
                 sql += $"({column.Size})";
             else if (column.Precision > 0 && column.Scale > 0)
@@ -96,8 +102,6 @@ namespace DatabaseManager.Utils
             else if (column.Precision > 0 && column.Scale > 0)
                 col += $"({column.Precision}, {column.Scale})";
 
-            if (column.PrimaryKey)
-                col += " PRIMARY KEY";
             if (!column.Nullable)
                 col += " NOT NULL";
             return col;

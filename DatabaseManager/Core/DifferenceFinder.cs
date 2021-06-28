@@ -70,11 +70,11 @@ namespace DatabaseManager.Core
                         Column memoryColumn = memoryTable.Columns.Where(i => i.Name == dbColumn.Name).FirstOrDefault();
 
                         if (memoryColumn.IsNull())
-                            yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.DropColumn };
+                            yield return new ColumnDifference() { TableName = dbTable.Name, Name = dbColumn.Name, Action = ColumnAction.DropColumn };
                         else
                         {
                             if (dbColumn.PrimaryKey && !memoryColumn.PrimaryKey)
-                                yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.DropPk };
+                                yield return new ColumnDifference() { TableName = dbTable.Name, Name = dbColumn.Name, Action = ColumnAction.DropPk };
                         }
                     }
                 }

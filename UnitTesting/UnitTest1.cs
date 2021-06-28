@@ -27,8 +27,7 @@ namespace UnitTesting
                 new Table("Users", new List<Column>
                 {
                        new Column("Username", i => i.String(200)),
-                       new Column("Password", i => i.String(200)),
-                       new Column("DECIMAL_TEST", i => i.Decimal(16, 2)),
+                       new Column("Password", i => i.String(200))
                 })
             };
             InsertCommonTables(tables);

@@ -51,9 +51,12 @@ namespace DatabaseManager.Core
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetServerConnection));
             DmlBuilder dmlBuilder = new DmlBuilder(Database, Tables);
             List<string> scripts = dmlBuilder.GenerateCreateScript().ToList();
-            db.ExecuteCommand(scripts.FirstOrDefault()); // Create Database.
+
+            db.ExecuteCommand(scripts.FirstOrDefault());
+            scripts.Remove(scripts.FirstOrDefault());
 
             db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
+
             foreach (string script in scripts)
             {
                 db.ExecuteCommand(script);
@@ -69,7 +72,6 @@ namespace DatabaseManager.Core
             {
                 db.ExecuteCommand(script);
             }
-
         }
 
         private IEnumerable<Table> GetDbTables()

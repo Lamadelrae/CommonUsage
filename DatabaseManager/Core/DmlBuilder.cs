@@ -54,26 +54,23 @@ namespace DatabaseManager.Core
             if (tableDifference.Action == TableAction.AddTable)
                 return GetTableByName(MemoryTables, tableDifference.Name).CreateTable();
             else if (tableDifference.Action == TableAction.DropTable)
-                return GetTableByName(MemoryTables, tableDifference.Name).DropTable();
+                return GetTableByName(DbTables, tableDifference.Name).DropTable();
             else
                 throw new NotSupportedException();
         }
 
         private string GenerateScriptForColumn(ColumnDifference columnDifference)
         {
-            Table table = GetTableByName(MemoryTables, columnDifference.TableName);
-            Column column = GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name);
-
             if (columnDifference.Action == ColumnAction.AddColumn)
-                return table.AddColumn(column);
+                return GetTableByName(MemoryTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.DropColumn)
-                return table.DropColumn(column);
+                return GetTableByName(DbTables, columnDifference.TableName).DropColumn(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.AddPk)
-                return table.AddPk(column);
+                return GetTableByName(MemoryTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.DropPk)
-                return table.DropPk(column);
+                return GetTableByName(DbTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.ModifyColumn)
-                return table.ModifyColumn(column);
+                return GetTableByName(MemoryTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
             else
                 throw new NotSupportedException();
         }
