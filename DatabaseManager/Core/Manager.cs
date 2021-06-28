@@ -41,7 +41,7 @@ namespace DatabaseManager.Core
         private bool DbNotExists()
         {
             DataCore<SysDatabases> db = new DataCore<SysDatabases>(new SqlConnection(Connection.GetServerConnection));
-            return db.ExecuteQuery("SELECT name Name FROM master.dbo.sysdatabases WHERE ('[' + name + ']' = @DatabaseName OR name = @DatabaseName",
+            return db.ExecuteQuery("SELECT name Name FROM master.dbo.sysdatabases WHERE ('[' + name + ']' = @DatabaseName OR name = @DatabaseName)",
                 new { DatabaseName = Database.Name }).Count == 0;
         }
 
