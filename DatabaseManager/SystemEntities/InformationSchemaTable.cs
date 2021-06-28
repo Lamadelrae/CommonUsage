@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseManager.SystemEntities
 {
-    public class InformationSchemaTable
+    internal class InformationSchemaTable
     {
         public string TABLE_NAME { get; set; }
     }

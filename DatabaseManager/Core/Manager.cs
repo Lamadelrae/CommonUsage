@@ -57,7 +57,6 @@ namespace DatabaseManager.Core
 
             db.ExecuteCommand(dmlBuilder.GenerateCreateScript().FirstOrDefault());
             db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
-
             foreach (string script in dmlBuilder.GenerateCreateScript().Skip(1))
             {
                 db.ExecuteCommand(script);
@@ -68,7 +67,6 @@ namespace DatabaseManager.Core
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
             DmlBuilder dmlBuilder = new DmlBuilder(Tables, GetDbTables().ToList());
-
             foreach (string script in dmlBuilder.GenerateUpdateScript())
             {
                 db.ExecuteCommand(script);

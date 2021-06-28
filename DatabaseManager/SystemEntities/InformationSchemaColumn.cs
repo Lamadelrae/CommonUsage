@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseManager.SystemEntities
 {
-    public class InformationSchemaColumn
+    internal class InformationSchemaColumn
     {
         public string COLUMN_NAME { get; set; }
 

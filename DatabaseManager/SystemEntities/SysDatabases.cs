@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseManager.SystemEntities
 {
-    public class SysDatabases
+    internal class SysDatabases
     {
         public string Name { get; set; }
     }
