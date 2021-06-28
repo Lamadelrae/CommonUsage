@@ -68,9 +68,8 @@ namespace DatabaseManager.ManagerEntities
             return this;
         }
 
-        public ColumnAttributes Guid(bool nullable, bool primaryKey)
+        public ColumnAttributes Guid(bool primaryKey)
         {
-            Nullable = nullable;
             PrimaryKey = primaryKey;
             Type = typeof(Guid);
             return this;

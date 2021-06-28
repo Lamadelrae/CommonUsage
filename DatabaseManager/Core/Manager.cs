@@ -34,16 +34,20 @@ namespace DatabaseManager.Core
         {
             if (DbNotExists())
                 CreateDatabase();
-            else
+            else if (HasAnyModifications())
                 UpdateDatabase();
         }
 
         private bool DbNotExists()
         {
             DataCore<SysDatabases> db = new DataCore<SysDatabases>(new SqlConnection(Connection.GetServerConnection));
-            string sql = @$"SELECT name Name FROM master.dbo.sysdatabases WHERE ('[' + name + ']' = @DatabaseName OR name = @DatabaseName)";
+            return db.ExecuteQuery("SELECT name Name FROM master.dbo.sysdatabases WHERE ('[' + name + ']' = @DatabaseName OR name = @DatabaseName", 
+                new { DatabaseName = Database.Name }).Count == 0;
+        }
 
-            return db.ExecuteQuery(sql, new { DatabaseName = Database.Name }).Count == 0;
+        private bool HasAnyModifications()
+        {
+            return DifferenceFinder.FindDifferences(Tables, GetDbTables().ToList()).Any();
         }
 
         private void CreateDatabase()
