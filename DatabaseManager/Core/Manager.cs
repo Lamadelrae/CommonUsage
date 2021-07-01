@@ -100,8 +100,9 @@ namespace DatabaseManager.Core
                             (CASE WHEN IS_NULLABLE = 'YES' THEN 1 ELSE 0 END ) IS_NULLABLE,
                             (CASE WHEN CONSTRAINT_NAME IS NOT NULL THEN 1 ELSE 0 END) IS_PRIMARY_KEY
                            FROM INFORMATION_SCHEMA.COLUMNS Columns
-                                LEFT JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Constraints  ON Columns.COLUMN_NAME = Constraints.COLUMN_NAME
-                           WHERE columns.TABLE_NAME= @TableName";
+                                LEFT JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Constraints 
+                                ON (Columns.TABLE_NAME + '_' +  Columns.COLUMN_NAME) = (Constraints.TABLE_NAME +  '_' + Constraints.COLUMN_NAME)
+                           WHERE columns.TABLE_NAME = @TableName";
 
             foreach (InformationSchemaColumn column in db.ExecuteQuery(sql, new { TableName = tableName }))
             {
