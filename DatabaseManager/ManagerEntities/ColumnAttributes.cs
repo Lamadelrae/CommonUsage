@@ -18,9 +18,11 @@ namespace DatabaseManager.ManagerEntities
 
         public bool PrimaryKey { get; private set; } = false;
 
+        public object DefaultValue { get; private set; }
+
         public Type Type { get; private set; }
 
-        public ColumnAttributes String(int size, bool nullable, bool primaryKey)
+        public ColumnAttributes String(int size, bool nullable = false, bool primaryKey = false, object defaultValue = null)
         {
             Size = size;
             Nullable = nullable;
@@ -29,82 +31,48 @@ namespace DatabaseManager.ManagerEntities
             return this;
         }
 
-        public ColumnAttributes String(int size)
-        {
-            Size = size;
-            Type = typeof(string);
-            return this;
-        }
-
-        public ColumnAttributes Int(bool nullable, bool primaryKey)
+        public ColumnAttributes Int(bool nullable = false, bool primaryKey = false, object defaultValue = null)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
+            DefaultValue = defaultValue;
             Type = typeof(int);
             return this;
         }
 
-        public ColumnAttributes Int()
-        {
-            Type = typeof(int);
-            return this;
-        }
-
-        public ColumnAttributes Decimal(int precision, int scale, bool nullable, bool primaryKey)
+        public ColumnAttributes Decimal(int precision, int scale, bool nullable = false, bool primaryKey = false, object defaultValue = null)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
             Precision = precision;
             Scale = scale;
+            DefaultValue = defaultValue;
             Type = typeof(decimal);
             return this;
         }
 
-        public ColumnAttributes Decimal(int precision, int scale)
-        {
-            Precision = precision;
-            Scale = scale;
-            Type = typeof(decimal);
-            return this;
-        }
-
-        public ColumnAttributes Guid(bool primaryKey)
+        public ColumnAttributes Guid(bool primaryKey = false, object defaultValue = null)
         {
             PrimaryKey = primaryKey;
+            DefaultValue = defaultValue;
             Type = typeof(Guid);
             return this;
         }
 
-        public ColumnAttributes Guid()
-        {
-            Type = typeof(Guid);
-            return this;
-        }
-
-        public ColumnAttributes Bool(bool nullable, bool primaryKey)
+        public ColumnAttributes Bool(bool nullable = false, bool primaryKey = false, object defaultValue = null)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
+            DefaultValue = defaultValue;
             Type = typeof(bool);
             return this;
         }
 
-        public ColumnAttributes Bool()
-        {
-            Type = typeof(bool);
-            return this;
-        }
-
-        public ColumnAttributes DateTime(bool nullable, bool primaryKey)
+        public ColumnAttributes DateTime(bool nullable = false, bool primaryKey = false, object defaultValue = null)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
-            Type = typeof(DateTime);
-            return this;
-        }
-
-        public ColumnAttributes DateTime()
-        {
+            DefaultValue = defaultValue;
             Type = typeof(DateTime);
             return this;
         }

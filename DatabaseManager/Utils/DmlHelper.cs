@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace DatabaseManager.Utils
 {
@@ -88,6 +89,8 @@ namespace DatabaseManager.Utils
 
             if (!column.Nullable)
                 sql += " NOT NULL";
+            if (column.DefaultValue.IsNotNull())
+                sql += $"DEFAULT '{column.DefaultValue.ToString()}'";
 
             sql += ";";
             return sql;
@@ -104,6 +107,8 @@ namespace DatabaseManager.Utils
 
             if (!column.Nullable)
                 col += " NOT NULL";
+            if (column.DefaultValue.IsNotNull())
+                col += $"DEFAULT '{column.DefaultValue.ToString()}'";
             return col;
         }
     }

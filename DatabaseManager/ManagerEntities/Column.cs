@@ -20,6 +20,8 @@ namespace DatabaseManager.ManagerEntities
 
         public bool PrimaryKey { get; set; } = false;
 
+        public object DefaultValue { get; set; }
+
         public Type Type { get; set; }
 
         public Column() { }
@@ -33,6 +35,7 @@ namespace DatabaseManager.ManagerEntities
             Scale = attributes.Scale;
             PrimaryKey = attributes.PrimaryKey;
             Nullable = attributes.Nullable;
+            DefaultValue = attributes.DefaultValue;
             Type = attributes.Type;
         }
 
