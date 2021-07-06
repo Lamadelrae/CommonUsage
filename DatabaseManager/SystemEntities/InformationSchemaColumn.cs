@@ -23,7 +23,5 @@ namespace DatabaseManager.SystemEntities
         public bool IS_NULLABLE { get; set; }
 
         public bool IS_PRIMARY_KEY { get; set; }
-
-        public bool HAS_PRECISION { get; set; }
     }
 }

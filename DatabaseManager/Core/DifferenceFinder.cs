@@ -39,9 +39,9 @@ namespace DatabaseManager.Core
                             yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddColumn);
                         else
                         {
-                            if (dbColumn.Size != memoryColumn.Size || (dbColumn.HasPrecision && (dbColumn.Precision != memoryColumn.Precision || dbColumn.Scale != memoryColumn.Scale)))
+                            if (dbColumn.Size != memoryColumn.Size || dbColumn.Precision != memoryColumn.Precision || dbColumn.Scale != memoryColumn.Scale)
                                 yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.ModifyColumn);
-                            if (dbColumn.DefaultValue != memoryColumn.DefaultValue)
+                            if (dbColumn.DefaultValue.IsNull() && memoryColumn.DefaultValue.IsNotNull())
                                 yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddDefault);
                             if (!dbColumn.PrimaryKey && memoryColumn.PrimaryKey)
                                 yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddPk);
@@ -78,7 +78,7 @@ namespace DatabaseManager.Core
                             if (dbColumn.PrimaryKey && !memoryColumn.PrimaryKey)
                                 yield return new ColumnDifference(dbTable.Name, dbColumn.Name, ColumnAction.DropPk);
 
-                            if (dbColumn.DefaultValue.IsNotDefault() && memoryColumn.DefaultValue.IsDefault())
+                            if (dbColumn.DefaultValue.IsNotNull() && memoryColumn.DefaultValue.IsNull())
                                 yield return new ColumnDifference(dbTable.Name, dbColumn.Name, ColumnAction.DropDefault);
                         }
                     }

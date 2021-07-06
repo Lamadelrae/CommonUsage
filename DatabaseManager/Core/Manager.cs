@@ -117,7 +117,6 @@ namespace DatabaseManager.Core
                     Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Nullable = column.IS_NULLABLE,
                     PrimaryKey = column.IS_PRIMARY_KEY,
-                    HasPrecision = column.HAS_PRECISION,
                     DefaultValue = column.COLUMN_DEFAULT
                 };
             }

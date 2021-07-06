@@ -59,6 +59,7 @@ namespace DatabaseManager.Core
                 throw new NotSupportedException();
         }
 
+        //TODO: refactor and separate removal from addition.
         private string GenerateScriptForColumn(ColumnDifference columnDifference)
         {
             if (columnDifference.Action == ColumnAction.AddColumn)
@@ -71,6 +72,10 @@ namespace DatabaseManager.Core
                 return GetTableByName(DbTables, columnDifference.TableName).DropPk(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
             else if (columnDifference.Action == ColumnAction.ModifyColumn)
                 return GetTableByName(MemoryTables, columnDifference.TableName).ModifyColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
+            else if (columnDifference.Action == ColumnAction.AddDefault)
+                return GetTableByName(MemoryTables, columnDifference.TableName).AddDefaultValue(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
+            else if (columnDifference.Action == ColumnAction.DropDefault)
+                return GetTableByName(DbTables, columnDifference.TableName).DropDefaultValue(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
             else
                 throw new NotSupportedException();
         }

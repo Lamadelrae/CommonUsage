@@ -12,8 +12,6 @@ namespace DatabaseManager.ManagerEntities
 
         public int Size { get; set; }
 
-        public bool HasPrecision { get; set; }
-
         public int Precision { get; set; } = 0;
 
         public int Scale { get; set; } = 0;
@@ -33,15 +31,12 @@ namespace DatabaseManager.ManagerEntities
             ColumnAttributes attributes = columnAttributes(new ColumnAttributes());
             Name = name;
             Size = attributes.Size;
+            Precision = attributes.Precision;
+            Scale = attributes.Scale;
             PrimaryKey = attributes.PrimaryKey;
             Nullable = attributes.Nullable;
             DefaultValue = attributes.DefaultValue;
             Type = attributes.Type;
-            if (attributes.HasPrecision)
-            {
-                Precision = attributes.Precision;
-                Scale = attributes.Scale;
-            }
         }
 
         public override bool Equals(object column) => this.Equals(column as Column);

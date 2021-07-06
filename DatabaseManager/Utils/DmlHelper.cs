@@ -85,10 +85,10 @@ namespace DatabaseManager.Utils
             return sql;
         }
 
-        public static string RemoveDefaultValue(this Table table, Column column)
+        public static string DropDefaultValue(this Table table, Column column)
         {
             string sql = $"ALTER TABLE {table.Name}";
-            sql += $"ALTER COLUMN {column.Name} DROP DEFAULT";
+            sql += $"DROP CONSTRAINT DF_{table.Name}_{column.Name}";
             return sql;
         }
 
@@ -99,7 +99,7 @@ namespace DatabaseManager.Utils
             sql += $"{column.Type.GetDbType()}";
             if (column.Size > 0)
                 sql += $"({column.Size})";
-            else if (column.HasPrecision)
+            else if (column.Precision > 0 && column.Scale > 0)
                 sql += $"({column.Precision}, {column.Scale})";
 
             if (!column.Nullable)
