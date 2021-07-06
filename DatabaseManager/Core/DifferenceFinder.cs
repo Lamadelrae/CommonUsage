@@ -28,7 +28,7 @@ namespace DatabaseManager.Core
                 Table dbTable = dbTables.Where(i => i.Name == memoryTable.Name).FirstOrDefault();
 
                 if (dbTable.IsNull())
-                    yield return new TableDifference(memoryTable.Name, TableAction.AddTable)
+                    yield return new TableDifference(memoryTable.Name, TableAction.AddTable);
                 else
                 {
                     foreach (Column memoryColumn in memoryTable.Columns)
