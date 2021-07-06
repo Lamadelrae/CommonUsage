@@ -53,6 +53,10 @@ namespace Utils
             return input == null || input.Length < 1;
         }
 
+        public static bool IsDefault(this object obj) => obj == default;
+
+        public static bool IsNotDefault(this object obj) => obj != default;
+
         public static string ToBrl(this decimal input) => input.ToString("c", CultureInfo.GetCultureInfo("pt-BR")).Replace("R$", string.Empty).Trim();
 
         public static string ToBrlWithSymbol(this decimal input) => input.ToString("c", CultureInfo.GetCultureInfo("pt-BR"));

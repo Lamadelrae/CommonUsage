@@ -12,6 +12,8 @@ namespace DatabaseManager.ManagerEntities
 
         public int Precision { get; private set; }
 
+        public bool HasPrecision { get; private set; }
+
         public int Scale { get; private set; }
 
         public bool Nullable { get; private set; } = false;
@@ -22,16 +24,17 @@ namespace DatabaseManager.ManagerEntities
 
         public Type Type { get; private set; }
 
-        public ColumnAttributes String(int size, bool nullable = false, bool primaryKey = false, object defaultValue = null)
+        public ColumnAttributes String(int size, bool nullable = false, bool primaryKey = false, string defaultValue = default)
         {
             Size = size;
             Nullable = nullable;
             PrimaryKey = primaryKey;
+            DefaultValue = defaultValue;
             Type = typeof(string);
             return this;
         }
 
-        public ColumnAttributes Int(bool nullable = false, bool primaryKey = false, object defaultValue = null)
+        public ColumnAttributes Int(bool nullable = false, bool primaryKey = false, int defaultValue = default)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
@@ -40,10 +43,11 @@ namespace DatabaseManager.ManagerEntities
             return this;
         }
 
-        public ColumnAttributes Decimal(int precision, int scale, bool nullable = false, bool primaryKey = false, object defaultValue = null)
+        public ColumnAttributes Decimal(int precision, int scale, bool nullable = false, bool primaryKey = false, decimal defaultValue = default)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
+            HasPrecision = true;
             Precision = precision;
             Scale = scale;
             DefaultValue = defaultValue;
@@ -51,7 +55,7 @@ namespace DatabaseManager.ManagerEntities
             return this;
         }
 
-        public ColumnAttributes Guid(bool primaryKey = false, object defaultValue = null)
+        public ColumnAttributes Guid(bool primaryKey = false, Guid defaultValue = default)
         {
             PrimaryKey = primaryKey;
             DefaultValue = defaultValue;
@@ -59,7 +63,7 @@ namespace DatabaseManager.ManagerEntities
             return this;
         }
 
-        public ColumnAttributes Bool(bool nullable = false, bool primaryKey = false, object defaultValue = null)
+        public ColumnAttributes Bool(bool nullable = false, bool primaryKey = false, bool defaultValue = default)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;
@@ -68,7 +72,7 @@ namespace DatabaseManager.ManagerEntities
             return this;
         }
 
-        public ColumnAttributes DateTime(bool nullable = false, bool primaryKey = false, object defaultValue = null)
+        public ColumnAttributes DateTime(bool nullable = false, bool primaryKey = false, DateTime defaultValue = default)
         {
             Nullable = nullable;
             PrimaryKey = primaryKey;

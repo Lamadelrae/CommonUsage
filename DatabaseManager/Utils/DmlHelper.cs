@@ -84,13 +84,13 @@ namespace DatabaseManager.Utils
             sql += $"{column.Type.GetDbType()}";
             if (column.Size > 0)
                 sql += $"({column.Size})";
-            else if (column.Precision > 0 && column.Scale > 0)
+            else if (column.HasPrecision)
                 sql += $"({column.Precision}, {column.Scale})";
 
             if (!column.Nullable)
                 sql += " NOT NULL";
-            if (column.DefaultValue.IsNotNull())
-                sql += $"DEFAULT '{column.DefaultValue.ToString()}'";
+            if (column.DefaultValue.IsNotDefault())
+                sql += $" DEFAULT '{column.DefaultValue.ToString()}'";
 
             sql += ";";
             return sql;
@@ -107,8 +107,8 @@ namespace DatabaseManager.Utils
 
             if (!column.Nullable)
                 col += " NOT NULL";
-            if (column.DefaultValue.IsNotNull())
-                col += $"DEFAULT '{column.DefaultValue.ToString()}'";
+            if (column.DefaultValue.IsNotDefault())
+                col += $" DEFAULT '{column.DefaultValue.ToString()}'";
             return col;
         }
     }

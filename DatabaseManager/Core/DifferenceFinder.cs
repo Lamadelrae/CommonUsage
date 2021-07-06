@@ -39,7 +39,7 @@ namespace DatabaseManager.Core
                             yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.AddColumn };
                         else
                         {
-                            if (dbColumn.Size != memoryColumn.Size || dbColumn.Precision != memoryColumn.Precision || dbColumn.Scale != memoryColumn.Scale)
+                            if (dbColumn.Size != memoryColumn.Size || (dbColumn.HasPrecision && (dbColumn.Precision != memoryColumn.Precision || dbColumn.Scale != memoryColumn.Scale)))
                                 yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.ModifyColumn };
                             if (!dbColumn.PrimaryKey && memoryColumn.PrimaryKey)
                                 yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.AddPk };
