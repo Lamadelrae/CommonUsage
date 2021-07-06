@@ -34,8 +34,8 @@ namespace UnitTesting
                    new Column("Password", i => i.String(200)),
                    new Column("Test_default_val", i => i.String(200, defaultValue: "lmao")),
                    new Column("Test_default_val2", i => i.Int(defaultValue: 100)),
-                   new Column("Test_default_val4", i => i.Decimal(16, 2, defaultValue: 100)),
                    new Column("Test_default_val3", i => i.Decimal(16, 2)),
+                   new Column("Test_default_val4", i => i.Decimal(16, 2, defaultValue: 100)),
             }),
             new Table("Client", new List<Column>
             {

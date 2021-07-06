@@ -93,12 +93,14 @@ namespace DatabaseManager.Core
             DataCore<InformationSchemaColumn> db = new DataCore<InformationSchemaColumn>(new SqlConnection(Connection.GetDatabaseConnection));
 
             string sql = @"SELECT Columns.COLUMN_NAME,
-			                DATA_TYPE,
-			                CHARACTER_MAXIMUM_LENGTH,
-			                NUMERIC_PRECISION,
-			                NUMERIC_SCALE,
-                            (CASE WHEN IS_NULLABLE = 'YES' THEN 1 ELSE 0 END ) IS_NULLABLE,
-                            (CASE WHEN CONSTRAINT_NAME IS NOT NULL THEN 1 ELSE 0 END) IS_PRIMARY_KEY
+			                       DATA_TYPE,
+			                       CHARACTER_MAXIMUM_LENGTH,
+			                       (CASE WHEN UPPER(DATA_TYPE) IN ('DECIMAL') THEN NUMERIC_PRECISION ELSE 0 END) NUMERIC_PRECISION,
+			                       (CASE WHEN UPPER(DATA_TYPE) IN ('DECIMAL') THEN NUMERIC_SCALE ELSE 0 END) NUMERIC_SCALE,
+                                   (CASE WHEN IS_NULLABLE = 'YES' THEN 1 ELSE 0 END ) IS_NULLABLE,
+                                   (CASE WHEN CONSTRAINT_NAME IS NOT NULL THEN 1 ELSE 0 END) IS_PRIMARY_KEY,
+							       (CASE WHEN UPPER(DATA_TYPE) IN ('DECIMAL') THEN 1 ELSE 0 END) HAS_PRECISION,
+							       COLUMN_DEFAULT
                            FROM INFORMATION_SCHEMA.COLUMNS Columns
                                 LEFT JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Constraints 
                                 ON (Columns.TABLE_NAME + '_' +  Columns.COLUMN_NAME) = (Constraints.TABLE_NAME +  '_' + Constraints.COLUMN_NAME)
@@ -114,7 +116,9 @@ namespace DatabaseManager.Core
                     Scale = column.NUMERIC_SCALE.IsNotNullOrEmpty() ? column.NUMERIC_SCALE.ToInt() : 0,
                     Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Nullable = column.IS_NULLABLE,
-                    PrimaryKey = column.IS_PRIMARY_KEY
+                    PrimaryKey = column.IS_PRIMARY_KEY,
+                    HasPrecision = column.HAS_PRECISION,
+                    DefaultValue = column.COLUMN_DEFAULT
                 };
             }
         }

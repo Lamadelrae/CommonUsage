@@ -13,14 +13,29 @@ namespace DatabaseManager.ManagerEntities
         public string Name { get; set; }
 
         public TableAction Action { get; set; }
+
+        public TableDifference(string name, TableAction action)
+        {
+            Name = name;
+            Action = action;
+        }
     }
 
     internal class ColumnDifference : Difference
     {
-        public string TableName { get; set; }
+        public string TableName { get; private set; }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        public ColumnAction Action { get; set; }
+        public ColumnAction Action { get; private set; }
+
+        public ColumnDifference(string tableName,
+                                string name,
+                                ColumnAction action)
+        {
+            TableName = tableName;
+            Name = name;
+            Action = action;
+        }
     }
 }

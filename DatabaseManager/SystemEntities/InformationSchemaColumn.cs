@@ -18,8 +18,12 @@ namespace DatabaseManager.SystemEntities
 
         public string NUMERIC_SCALE { get; set; }
 
+        public string COLUMN_DEFAULT { get; set; }
+
         public bool IS_NULLABLE { get; set; }
 
         public bool IS_PRIMARY_KEY { get; set; }
+
+        public bool HAS_PRECISION { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace DatabaseManager.Core
                 Table dbTable = dbTables.Where(i => i.Name == memoryTable.Name).FirstOrDefault();
 
                 if (dbTable.IsNull())
-                    yield return new TableDifference() { Name = memoryTable.Name, Action = TableAction.AddTable };
+                    yield return new TableDifference(memoryTable.Name, TableAction.AddTable)
                 else
                 {
                     foreach (Column memoryColumn in memoryTable.Columns)
@@ -36,13 +36,15 @@ namespace DatabaseManager.Core
                         Column dbColumn = dbTable.Columns.Where(i => i.Name == memoryColumn.Name).FirstOrDefault();
 
                         if (dbColumn.IsNull())
-                            yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.AddColumn };
+                            yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddColumn);
                         else
                         {
                             if (dbColumn.Size != memoryColumn.Size || (dbColumn.HasPrecision && (dbColumn.Precision != memoryColumn.Precision || dbColumn.Scale != memoryColumn.Scale)))
-                                yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.ModifyColumn };
+                                yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.ModifyColumn);
+                            if (dbColumn.DefaultValue != memoryColumn.DefaultValue)
+                                yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddDefault);
                             if (!dbColumn.PrimaryKey && memoryColumn.PrimaryKey)
-                                yield return new ColumnDifference() { TableName = memoryTable.Name, Name = memoryColumn.Name, Action = ColumnAction.AddPk };
+                                yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddPk);
                         }
                     }
                 }
@@ -62,7 +64,7 @@ namespace DatabaseManager.Core
                 Table memoryTable = memoryTables.Where(i => i.Name == dbTable.Name).FirstOrDefault();
 
                 if (memoryTable.IsNull())
-                    yield return new TableDifference() { Name = dbTable.Name, Action = TableAction.DropTable };
+                    yield return new TableDifference(dbTable.Name, TableAction.DropTable);
                 else
                 {
                     foreach (Column dbColumn in dbTable.Columns)
@@ -70,11 +72,14 @@ namespace DatabaseManager.Core
                         Column memoryColumn = memoryTable.Columns.Where(i => i.Name == dbColumn.Name).FirstOrDefault();
 
                         if (memoryColumn.IsNull())
-                            yield return new ColumnDifference() { TableName = dbTable.Name, Name = dbColumn.Name, Action = ColumnAction.DropColumn };
+                            yield return new ColumnDifference(dbTable.Name, dbColumn.Name, ColumnAction.DropColumn);
                         else
                         {
                             if (dbColumn.PrimaryKey && !memoryColumn.PrimaryKey)
-                                yield return new ColumnDifference() { TableName = dbTable.Name, Name = dbColumn.Name, Action = ColumnAction.DropPk };
+                                yield return new ColumnDifference(dbTable.Name, dbColumn.Name, ColumnAction.DropPk);
+
+                            if (dbColumn.DefaultValue.IsNotDefault() && memoryColumn.DefaultValue.IsDefault())
+                                yield return new ColumnDifference(dbTable.Name, dbColumn.Name, ColumnAction.DropDefault);
                         }
                     }
                 }

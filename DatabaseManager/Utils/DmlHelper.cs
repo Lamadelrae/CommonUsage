@@ -77,6 +77,21 @@ namespace DatabaseManager.Utils
             return sql;
         }
 
+        public static string AddDefaultValue(this Table table, Column column)
+        {
+            string sql = $"ALTER TABLE {table.Name}";
+            sql += $"ADD CONSTRAINT DF_{table.Name}_{column.Name}";
+            sql += $"DEFAULT '{column.DefaultValue}' FOR {column.Name}";
+            return sql;
+        }
+
+        public static string RemoveDefaultValue(this Table table, Column column)
+        {
+            string sql = $"ALTER TABLE {table.Name}";
+            sql += $"ALTER COLUMN {column.Name} DROP DEFAULT";
+            return sql;
+        }
+
         public static string ModifyColumn(this Table table, Column column)
         {
             string sql = $"ALTER TABLE {table.Name} ";
@@ -89,8 +104,6 @@ namespace DatabaseManager.Utils
 
             if (!column.Nullable)
                 sql += " NOT NULL";
-            if (column.DefaultValue.IsNotDefault())
-                sql += $" DEFAULT '{column.DefaultValue.ToString()}'";
 
             sql += ";";
             return sql;
