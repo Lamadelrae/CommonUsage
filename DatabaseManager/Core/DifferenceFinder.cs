@@ -41,8 +41,13 @@ namespace DatabaseManager.Core
                         {
                             if (dbColumn.Size != memoryColumn.Size || dbColumn.Precision != memoryColumn.Precision || dbColumn.Scale != memoryColumn.Scale)
                                 yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.ModifyColumn);
+
                             if (dbColumn.DefaultValue.IsNull() && memoryColumn.DefaultValue.IsNotNull())
                                 yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddDefault);
+
+                            if (dbColumn.DefaultValue != memoryColumn.DefaultValue)
+                                yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.ModifyDefault);
+
                             if (!dbColumn.PrimaryKey && memoryColumn.PrimaryKey)
                                 yield return new ColumnDifference(memoryTable.Name, memoryColumn.Name, ColumnAction.AddPk);
                         }

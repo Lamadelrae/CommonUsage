@@ -12,11 +12,11 @@ namespace DatabaseManager.SystemEntities
 
         public string DATA_TYPE { get; set; }
 
-        public string CHARACTER_MAXIMUM_LENGTH { get; set; }
+        public int CHARACTER_MAXIMUM_LENGTH { get; set; }
 
-        public string NUMERIC_PRECISION { get; set; }
+        public int NUMERIC_PRECISION { get; set; }
 
-        public string NUMERIC_SCALE { get; set; }
+        public int NUMERIC_SCALE { get; set; }
 
         public string COLUMN_DEFAULT { get; set; }
 

@@ -111,9 +111,9 @@ namespace DatabaseManager.Core
                 yield return new Column()
                 {
                     Name = column.COLUMN_NAME,
-                    Size = column.CHARACTER_MAXIMUM_LENGTH.IsNotNullOrEmpty() ? column.CHARACTER_MAXIMUM_LENGTH.ToInt() : 0,
-                    Precision = column.NUMERIC_PRECISION.IsNotNullOrEmpty() ? column.NUMERIC_PRECISION.ToInt() : 0,
-                    Scale = column.NUMERIC_SCALE.IsNotNullOrEmpty() ? column.NUMERIC_SCALE.ToInt() : 0,
+                    Size = column.CHARACTER_MAXIMUM_LENGTH,
+                    Precision = column.NUMERIC_PRECISION,
+                    Scale = column.NUMERIC_SCALE,
                     Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Nullable = column.IS_NULLABLE,
                     PrimaryKey = column.IS_PRIMARY_KEY,

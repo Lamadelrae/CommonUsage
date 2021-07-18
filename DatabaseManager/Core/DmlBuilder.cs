@@ -42,42 +42,60 @@ namespace DatabaseManager.Core
         {
             foreach (Difference difference in DifferenceFinder.FindDifferences(MemoryTables, DbTables))
             {
-                if (difference is TableDifference)
-                    yield return GenerateScriptForTable((TableDifference)difference);
-                else if (difference is ColumnDifference)
-                    yield return GenerateScriptForColumn((ColumnDifference)difference);
+                if (difference is TableDifference tableDifference)
+                    yield return GenerateScriptForTable(tableDifference);
+                else if (difference is ColumnDifference columnDifference)
+                    yield return GenerateScriptForColumn(columnDifference);
             }
         }
 
         private string GenerateScriptForTable(TableDifference tableDifference)
         {
-            if (tableDifference.Action == TableAction.AddTable)
-                return GetTableByName(MemoryTables, tableDifference.Name).CreateTable();
-            else if (tableDifference.Action == TableAction.DropTable)
-                return GetTableByName(DbTables, tableDifference.Name).DropTable();
-            else
-                throw new NotSupportedException();
+            Table table = GetTableAccordingToDifference(tableDifference);
+
+            return tableDifference.Action switch
+            {
+                TableAction.AddTable => table.CreateTable(),
+                TableAction.DropTable => table.DropTable(),
+                _ => throw new NotSupportedException("Table action not found.")
+            };
         }
 
-        //TODO: refactor and separate removal from addition.
         private string GenerateScriptForColumn(ColumnDifference columnDifference)
         {
-            if (columnDifference.Action == ColumnAction.AddColumn)
-                return GetTableByName(MemoryTables, columnDifference.TableName).AddColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
-            else if (columnDifference.Action == ColumnAction.DropColumn)
-                return GetTableByName(DbTables, columnDifference.TableName).DropColumn(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
-            else if (columnDifference.Action == ColumnAction.AddPk)
-                return GetTableByName(MemoryTables, columnDifference.TableName).AddPk(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
-            else if (columnDifference.Action == ColumnAction.DropPk)
-                return GetTableByName(DbTables, columnDifference.TableName).DropPk(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
-            else if (columnDifference.Action == ColumnAction.ModifyColumn)
-                return GetTableByName(MemoryTables, columnDifference.TableName).ModifyColumn(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
-            else if (columnDifference.Action == ColumnAction.AddDefault)
-                return GetTableByName(MemoryTables, columnDifference.TableName).AddDefaultValue(GetColumnByTableAndName(MemoryTables, columnDifference.TableName, columnDifference.Name));
-            else if (columnDifference.Action == ColumnAction.DropDefault)
-                return GetTableByName(DbTables, columnDifference.TableName).DropDefaultValue(GetColumnByTableAndName(DbTables, columnDifference.TableName, columnDifference.Name));
+            Table table = GetTableAccordingToDifference(columnDifference);
+            Column column = GetColumnByName(table, columnDifference.Name);
+            return columnDifference.Action switch
+            {
+                ColumnAction.AddColumn => table.AddColumn(column),
+                ColumnAction.DropColumn => table.DropColumn(column),
+                ColumnAction.AddPk => table.AddPk(column),
+                ColumnAction.DropPk => table.DropPk(column),
+                ColumnAction.ModifyColumn => table.ModifyColumn(column),
+                ColumnAction.AddDefault => table.AddDefaultValue(column),
+                ColumnAction.DropDefault => table.DropDefaultValue(column),
+                _ => throw new NotSupportedException("Column action not found.")
+            };
+        }
+
+        private Table GetTableAccordingToDifference(Difference difference)
+        {
+            if (difference is TableDifference tableDifference)
+            {
+                if (tableDifference.Action.CanGetFromDb())
+                    return GetTableByName(DbTables, tableDifference.Name);
+                else
+                    return GetTableByName(MemoryTables, tableDifference.Name);
+            }
+            else if (difference is ColumnDifference columnDifference)
+            {
+                if (columnDifference.Action.CanGetFromDb())
+                    return GetTableByName(DbTables, columnDifference.TableName);
+                else
+                    return GetTableByName(MemoryTables, columnDifference.TableName);
+            }
             else
-                throw new NotSupportedException();
+                throw new NotSupportedException("Difference not supported.");
         }
 
         private Table GetTableByName(List<Table> list, string name)
@@ -85,10 +103,9 @@ namespace DatabaseManager.Core
             return list.Where(i => i.Name == name).FirstOrDefault();
         }
 
-        private Column GetColumnByTableAndName(List<Table> list, string tableName, string columnName)
+        private Column GetColumnByName(Table table, string columnName)
         {
-            return list.Where(i => i.Name == tableName).FirstOrDefault()
-                    .Columns.Where(i => i.Name == columnName).FirstOrDefault();
+            return table.Columns.Where(i => i.Name == columnName).FirstOrDefault();
         }
     }
 }

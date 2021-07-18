@@ -20,6 +20,7 @@ namespace DatabaseManager.ManagerEntities
         DropPk,
         ModifyColumn,
         AddDefault,
-        DropDefault
+        DropDefault,
+        ModifyDefault
     }
 }

@@ -81,14 +81,21 @@ namespace DatabaseManager.Utils
         {
             string sql = $"ALTER TABLE {table.Name}";
             sql += $"ADD CONSTRAINT DF_{table.Name}_{column.Name}";
-            sql += $"DEFAULT '{column.DefaultValue}' FOR {column.Name}";
+            sql += $"DEFAULT '{column.DefaultValue}' FOR {column.Name};";
             return sql;
         }
 
         public static string DropDefaultValue(this Table table, Column column)
         {
             string sql = $"ALTER TABLE {table.Name}";
-            sql += $"DROP CONSTRAINT DF_{table.Name}_{column.Name}";
+            sql += $"DROP CONSTRAINT DF_{table.Name}_{column.Name};";
+            return sql;
+        }
+
+        public static string ModifyDefaultValue(Table table, Column column)
+        {
+            string sql = DropDefaultValue(table, column);
+            sql += AddDefaultValue(table, column);
             return sql;
         }
 
@@ -123,6 +130,18 @@ namespace DatabaseManager.Utils
             if (column.DefaultValue.IsNotDefault())
                 col += $" DEFAULT '{column.DefaultValue.ToString()}'";
             return col;
+        }
+
+        public static bool CanGetFromDb(this ColumnAction action)
+        {
+            return action == ColumnAction.DropColumn &&
+                   action == ColumnAction.DropDefault &&
+                   action == ColumnAction.DropPk;
+        }
+
+        public static bool CanGetFromDb(this TableAction action)
+        {
+            return action == TableAction.DropTable;
         }
     }
 }
