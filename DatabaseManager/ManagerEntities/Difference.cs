@@ -10,9 +10,9 @@ namespace DatabaseManager.ManagerEntities
 
     internal class TableDifference : Difference
     {
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        public TableAction Action { get; set; }
+        public TableAction Action { get; private set; }
 
         public TableDifference(string name, TableAction action)
         {
