@@ -26,9 +26,9 @@ namespace DatabaseManager.Utils
             foreach (Column column in table.Columns)
             {
                 if (string.IsNullOrEmpty(columns))
-                    columns += CreateColumn(column);
+                    columns += CreateColumn(table, column);
                 else
-                    columns += $", {CreateColumn(column)}";
+                    columns += $", {CreateColumn(table, column)}";
             }
 
             if (table.Columns.Any(i => i.PrimaryKey))
@@ -51,7 +51,7 @@ namespace DatabaseManager.Utils
         public static string AddColumn(this Table table, Column column)
         {
             string sql = $"ALTER TABLE {table.Name} ";
-            sql += $"ADD {CreateColumn(column)};";
+            sql += $"ADD {CreateColumn(table, column)};";
             return sql;
         }
 
@@ -60,7 +60,6 @@ namespace DatabaseManager.Utils
             string sql = $"ALTER TABLE {table.Name} ";
             sql += $"DROP COLUMN {column.Name};";
             return sql;
-
         }
 
         public static string AddPk(this Table table, Column column)
@@ -79,20 +78,20 @@ namespace DatabaseManager.Utils
 
         public static string AddDefaultValue(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name}";
-            sql += $"ADD CONSTRAINT DF_{table.Name}_{column.Name}";
+            string sql = $"ALTER TABLE {table.Name} ";
+            sql += $"ADD CONSTRAINT DF_{table.Name}_{column.Name} ";
             sql += $"DEFAULT '{column.DefaultValue}' FOR {column.Name};";
             return sql;
         }
 
         public static string DropDefaultValue(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name}";
+            string sql = $"ALTER TABLE {table.Name} ";
             sql += $"DROP CONSTRAINT DF_{table.Name}_{column.Name};";
             return sql;
         }
 
-        public static string ModifyDefaultValue(Table table, Column column)
+        public static string ModifyDefaultValue(this Table table, Column column)
         {
             string sql = DropDefaultValue(table, column);
             sql += AddDefaultValue(table, column);
@@ -116,7 +115,7 @@ namespace DatabaseManager.Utils
             return sql;
         }
 
-        public static string CreateColumn(this Column column)
+        public static string CreateColumn(this Table table, Column column)
         {
             string col = $"{column.Name}";
             col += $" {column.Type.GetDbType()}";
@@ -127,15 +126,16 @@ namespace DatabaseManager.Utils
 
             if (!column.Nullable)
                 col += " NOT NULL";
-            if (column.DefaultValue.IsNotDefault())
-                col += $" DEFAULT '{column.DefaultValue.ToString()}'";
+            if (column.DefaultValue.IsNotNullOrEmpty())
+                col += $" CONSTRAINT DF_{table.Name}_{column.Name} DEFAULT '{column.DefaultValue}'";
+
             return col;
         }
 
         public static bool CanGetFromDb(this ColumnAction action)
         {
-            return action == ColumnAction.DropColumn &&
-                   action == ColumnAction.DropDefault &&
+            return action == ColumnAction.DropColumn ||
+                   action == ColumnAction.DropDefault ||
                    action == ColumnAction.DropPk;
         }
 

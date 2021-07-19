@@ -31,7 +31,8 @@ namespace UnitTesting
                 new Table("Person", new List<Column>
                 {
                        new Column("Username", i => i.String(200)),
-                       new Column("Password", i => i.String(200))
+                       new Column("Password", i => i.String(200)),
+                       new Column("TestVal", i => i.String(120, defaultValue: "testa"))
                 }),
                 new Table("Client", new List<Column>
                 {
@@ -47,7 +48,7 @@ namespace UnitTesting
                     new Column("Profission",  i => i.String(200)),
                     new Column("CivilState",  i => i.Int())
                 }),
-                new Table("ClientAddress", new List<Column>
+                new Table("Address", new List<Column>
                 {
                     new Column("ClientId",  i => i.Guid()),
                     new Column("ZipCode",  i => i.String(200)),
@@ -59,7 +60,7 @@ namespace UnitTesting
                     new Column("State",  i => i.String(200)),
                     new Column("IsMain",  i => i.Bool())
                 }),
-                new Table("ClientContact", new List<Column>
+                new Table("Contact", new List<Column>
                 {
                     new Column("ClientId",  i => i.Guid()),
                     new Column("Description",  i => i.String(200)),

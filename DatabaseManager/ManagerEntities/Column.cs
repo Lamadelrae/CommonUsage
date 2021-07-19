@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace DatabaseManager.ManagerEntities
 {
@@ -20,7 +21,7 @@ namespace DatabaseManager.ManagerEntities
 
         public bool PrimaryKey { get; set; } = false;
 
-        public object DefaultValue { get; set; }
+        public string DefaultValue { get; set; }
 
         public Type Type { get; set; }
 
@@ -35,11 +36,9 @@ namespace DatabaseManager.ManagerEntities
             Scale = attributes.Scale;
             PrimaryKey = attributes.PrimaryKey;
             Nullable = attributes.Nullable;
-            DefaultValue = attributes.DefaultValue;
+            DefaultValue = attributes.DefaultValue.IsNull() ? string.Empty : attributes.DefaultValue.ToString();
             Type = attributes.Type;
         }
-
-        public override bool Equals(object column) => this.Equals(column as Column);
 
         public bool Equals(Column column)
         {

@@ -74,6 +74,7 @@ namespace DatabaseManager.Core
                 ColumnAction.ModifyColumn => table.ModifyColumn(column),
                 ColumnAction.AddDefault => table.AddDefaultValue(column),
                 ColumnAction.DropDefault => table.DropDefaultValue(column),
+                ColumnAction.ModifyDefault => table.ModifyDefaultValue(column),
                 _ => throw new NotSupportedException("Column action not found.")
             };
         }

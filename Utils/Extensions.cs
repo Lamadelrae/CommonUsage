@@ -11,25 +11,13 @@ namespace Utils
 {
     public static class Extensions
     {
-        public static int ToInt(this object obj)
-        {
-            return Convert.ToInt32(obj);
-        }
+        public static int ToInt(this object obj) => Convert.ToInt32(obj);
 
-        public static decimal ToDecimal(this object obj)
-        {
-            return Convert.ToDecimal(obj);
-        }
+        public static decimal ToDecimal(this object obj) => Convert.ToDecimal(obj);
 
-        public static bool IsNull(this object obj)
-        {
-            return obj == null;
-        }
+        public static bool IsNull(this object obj) => obj == null;
 
-        public static bool IsNotNull(this object obj)
-        {
-            return obj != null;
-        }
+        public static bool IsNotNull(this object obj) => obj != null;
 
         public static bool IsNotNull<T>(this T obj, out T outObj)
         {
@@ -38,20 +26,11 @@ namespace Utils
             return obj != null;
         }
 
-        public static bool IsNullOrEmpty(this string inputString)
-        {
-            return string.IsNullOrEmpty(inputString);
-        }
+        public static bool IsNullOrEmpty(this string inputString) => string.IsNullOrEmpty(inputString);
 
-        public static bool IsNotNullOrEmpty(this string input)
-        {
-            return !string.IsNullOrEmpty(input);
-        }
+        public static bool IsNotNullOrEmpty(this string input) => !string.IsNullOrEmpty(input);
 
-        public static bool IsNullOrLessThanOne(this string input)
-        {
-            return input == null || input.Length < 1;
-        }
+        public static bool IsNullOrLessThanOne(this string input) => input == null || input.Length < 1;
 
         public static bool IsDefault(this object obj) => obj == default;
 

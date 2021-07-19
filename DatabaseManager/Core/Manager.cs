@@ -117,7 +117,7 @@ namespace DatabaseManager.Core
                     Type = column.DATA_TYPE.ToUpper().GetSystemType(),
                     Nullable = column.IS_NULLABLE,
                     PrimaryKey = column.IS_PRIMARY_KEY,
-                    DefaultValue = column.COLUMN_DEFAULT
+                    DefaultValue = column.COLUMN_DEFAULT.Replace("('", string.Empty).Replace("')", string.Empty)
                 };
             }
         }
