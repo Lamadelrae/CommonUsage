@@ -57,7 +57,11 @@ namespace DatabaseManager.Utils
 
         public static string DropColumn(this Table table, Column column)
         {
-            string sql = $"ALTER TABLE {table.Name} ";
+            string sql = string.Empty;
+            if (column.DefaultValue.IsNotNullOrEmpty())
+                sql += DropDefaultValue(table, column);
+
+            sql += $"ALTER TABLE {table.Name} ";
             sql += $"DROP COLUMN {column.Name};";
             return sql;
         }
