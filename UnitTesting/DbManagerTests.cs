@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace UnitTesting
 {
     [TestClass]
-    public class UnitTest1
+    public class DbManagerTests
     {
         [TestMethod]
         public void CreateTable()

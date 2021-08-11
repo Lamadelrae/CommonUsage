@@ -15,6 +15,8 @@ namespace Utils
 
         public static decimal ToDecimal(this object obj) => Convert.ToDecimal(obj);
 
+        public static double ToDouble(this object obj) => Convert.ToDouble(obj);
+
         public static bool IsNull(this object obj) => obj == null;
 
         public static bool IsNotNull(this object obj) => obj != null;
@@ -31,10 +33,6 @@ namespace Utils
         public static bool IsNotNullOrEmpty(this string input) => !string.IsNullOrEmpty(input);
 
         public static bool IsNullOrLessThanOne(this string input) => input == null || input.Length < 1;
-
-        public static bool IsDefault(this object obj) => obj == default;
-
-        public static bool IsNotDefault(this object obj) => obj != default;
 
         public static string ToBrl(this decimal input) => input.ToString("c", CultureInfo.GetCultureInfo("pt-BR")).Replace("R$", string.Empty).Trim();
 
