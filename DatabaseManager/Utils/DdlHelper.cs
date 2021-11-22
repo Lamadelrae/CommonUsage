@@ -9,7 +9,7 @@ using Utils;
 
 namespace DatabaseManager.Utils
 {
-    internal static class DmlHelper
+    internal static class DdlHelper
     {
         public static string CreateDatabase(this Database database)
         {
