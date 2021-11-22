@@ -8,7 +8,7 @@ using Utils;
 
 namespace DatabaseManager.Core
 {
-    internal class DmlBuilder
+    internal class DdlBuilder
     {
         Database Database { get; set; }
 
@@ -16,13 +16,13 @@ namespace DatabaseManager.Core
 
         List<Table> DbTables { get; set; }
 
-        public DmlBuilder(List<Table> memoryTables, List<Table> dbTables)
+        public DdlBuilder(List<Table> memoryTables, List<Table> dbTables)
         {
             MemoryTables = memoryTables;
             DbTables = dbTables;
         }
 
-        public DmlBuilder(Database database, List<Table> memoryTables)
+        public DdlBuilder(Database database, List<Table> memoryTables)
         {
             Database = database;
             MemoryTables = memoryTables;

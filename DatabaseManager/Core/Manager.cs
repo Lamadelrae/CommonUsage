@@ -1,18 +1,15 @@
 ﻿using DatabaseManager.Extensions;
 using DatabaseManager.ManagerEntities;
 using DatabaseManager.SystemEntities;
-using DatabaseManager.Utils;
 using DataCore;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Utils;
 
 namespace DatabaseManager.Core
 {
+    [Obsolete("This library is no longer used.")]
     public class Manager
     {
         Database Database { get; set; }
@@ -53,7 +50,7 @@ namespace DatabaseManager.Core
         private void CreateDatabase()
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetServerConnection));
-            DmlBuilder dmlBuilder = new DmlBuilder(Database, Tables);
+            DdlBuilder dmlBuilder = new DdlBuilder(Database, Tables);
 
             db.ExecuteCommand(dmlBuilder.GenerateCreateScript().FirstOrDefault());
             db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
@@ -66,7 +63,7 @@ namespace DatabaseManager.Core
         private void UpdateDatabase()
         {
             DataCore<object> db = new DataCore<object>(new SqlConnection(Connection.GetDatabaseConnection));
-            DmlBuilder dmlBuilder = new DmlBuilder(Tables, GetDbTables().ToList());
+            DdlBuilder dmlBuilder = new DdlBuilder(Tables, GetDbTables().ToList());
             foreach (string script in dmlBuilder.GenerateUpdateScript())
             {
                 db.ExecuteCommand(script);
