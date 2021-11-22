@@ -1,0 +1,1 @@
+# This project contains my personal Database manager, but is now obsolete. New schema builder project -> https://github.com/Lamadelrae/SchemaBuilder
